@@ -305,8 +305,7 @@ async function lerNFC() {
 
           try {
             // 🔥 chamada ao backend
-            //const response = await fetch(`${urlNFC}/${data}`, {
-            const response = await fetch(`${urlNFC}`, {
+            const response = await fetch(`${urlNFC}/${data}`, {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json'
