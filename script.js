@@ -301,6 +301,7 @@ async function lerNFC() {
           const data = textDecoder.decode(record.data);
 
           console.log("Conteúdo NFC:", data);
+          alert("Lida com sucesso!");
 
           try {
             // 🔥 chamada ao backend
