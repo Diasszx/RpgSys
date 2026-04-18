@@ -281,6 +281,8 @@ const closeModal = () => {
     modal.classList.add('modal-hidden');
 };
 
+const urlNFC = 'https://dagny-mollusklike-exasperatedly.ngrok-free.dev/clientes';
+
 async function lerNFC() {
   if ('NDEFReader' in window) {
     try {
@@ -289,7 +291,7 @@ async function lerNFC() {
 
       console.log("Aproxime o NFC...");
 
-      ndef.onreading = event => {
+      ndef.onreading = async event => {
         const { message, serialNumber } = event;
 
         console.log("Tag ID:", serialNumber);
@@ -298,7 +300,32 @@ async function lerNFC() {
           const textDecoder = new TextDecoder(record.encoding);
           const data = textDecoder.decode(record.data);
 
-          alert("Conteúdo:", data);
+          console.log("Conteúdo NFC:", data);
+
+          try {
+            // 🔥 chamada ao backend
+            //const response = await fetch(`${urlNFC}/${data}`, {
+            const response = await fetch(`${urlNFC}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            if (!response.ok) {
+              throw new Error(`Erro HTTP: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            console.log("Resposta API:", result);
+
+            alert(`Cliente encontrado: ${result.nome}`);
+
+          } catch (apiError) {
+            console.error("Erro ao consultar API:", apiError);
+            alert("Erro ao buscar cliente");
+          }
         }
       };
 
