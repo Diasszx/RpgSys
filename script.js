@@ -298,7 +298,7 @@ async function lerNFC() {
           const textDecoder = new TextDecoder(record.encoding);
           const data = textDecoder.decode(record.data);
 
-          console.log("Conteúdo:", data);
+          alert("Conteúdo:", data);
         }
       };
 
