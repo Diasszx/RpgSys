@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+
+    <title>D&D</title>
+</head>
+<body>
+    <h1> Classes de D&D </h1>
+    <input type="text" id="input_filter" placeholder="Filtrar Classes...">
+    <button type="button" id="btn_class">Listar Classes</button>
+
+    <ul id="lista_classes"></ul>
+
+    <div id="class_detail"></div>
+
+    <div id="create-character-section">
+        <h1>Criação de Personagem</h1>
+        <input type="text" id="player_name" placeholder="Nome do Personagem">
+        <select id="classes_select">
+            <option value="">Selecione uma classe...</option>
+        </select>
+        <button id="btn_create">Criar Personagem</button>
+    </div>
+
+    <h3>Seus Personagens:</h3>
+    <ul id="lista_personagens"></ul> 
+
+    <div id="modal_overlay" class="modal-hidden">
+    <div class="modal-content">
+        <div id="modal_header">
+            <h3>Selecionar Magia</h3>
+            <button id="btn_close_modal">X</button>
+        </div>
+        <div id="modal_body_content">
+            <select id="spells_select">
+                <option value="">Carregando magias...</option>
+            </select>
+            <button id="btn_add_spell">Adicionar ao Grimório</button>
+        </div>
+    </div>
+</div>
+
+<div>
+    <button id="btn_nfc">LER NFC</button>
+</div>
+
+</body>
+
+<script src="script.js"></script>
+</html>
+
+
+
