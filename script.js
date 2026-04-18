@@ -301,15 +301,24 @@ async function lerNFC() {
           const data = textDecoder.decode(record.data);
 
           console.log("Conteúdo NFC:", data);
-          alert("Lida com sucesso!");
 
           try {
             // 🔥 chamada ao backend
-            const response = await fetch(`${urlNFC}/${data}`);
+            const response = await fetch(`${urlNFC}/${data}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            debugLog(`Data NFC: ${data}`);
+            debugLog(`URL: ${urlNFC}/${data}`);
 
             if (!response.ok) {
               throw new Error(`Erro HTTP: ${response.status}`);
             }
+            
+            debugLog(`Status: ${response.status}`);
 
             const result = await response.json();
 
@@ -330,6 +339,13 @@ async function lerNFC() {
   } else {
     alert("NFC não suportado neste dispositivo");
   }
+}
+
+
+
+function debugLog(msg) {
+  const el = document.getElementById('debug');
+  el.innerHTML += `<div>${msg}</div>`;
 }
 
 
