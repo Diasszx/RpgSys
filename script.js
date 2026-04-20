@@ -283,6 +283,9 @@ const closeModal = () => {
 
 const urlNFC = 'https://dagny-mollusklike-exasperatedly.ngrok-free.dev/clientes';
 
+const leiturasRecentes = new Map();
+const INTERVALO_MS = 3000; // 3 segundos
+
 async function lerNFC() {
   if ('NDEFReader' in window) {
     try {
@@ -293,22 +296,47 @@ async function lerNFC() {
 
       ndef.onreading = async event => {
         const { message, serialNumber } = event;
+        const agora = Date.now();
+
+        // 🔒 BLOQUEIO DE LEITURA DUPLICADA
+        if (leiturasRecentes.has(serialNumber)) {
+          const ultima = leiturasRecentes.get(serialNumber);
+
+          if (agora - ultima < INTERVALO_MS) {
+            console.log("Leitura ignorada (duplicada):", serialNumber);
+            return;
+          }
+        }
+
+        // Atualiza registro da leitura
+        leiturasRecentes.set(serialNumber, agora);
+
+        // Limpeza automática (evita crescer memória)
+        setTimeout(() => {
+          leiturasRecentes.delete(serialNumber);
+        }, INTERVALO_MS);
 
         console.log("Tag ID:", serialNumber);
 
         for (const record of message.records) {
-          const textDecoder = new TextDecoder(record.encoding);
-          const data = textDecoder.decode(record.data);
+          let data = "";
+
+          // 🔧 decode seguro
+          if (record.recordType === "text") {
+            data = new TextDecoder(record.encoding || "utf-8")
+              .decode(record.data);
+          } else {
+            data = new TextDecoder().decode(record.data);
+          }
 
           console.log("Conteúdo NFC:", data);
 
           try {
-            // 🔥 chamada ao backend
             const response = await fetch(`${urlNFC}/${data}`, {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
-                 'ngrok-skip-browser-warning': 'true'
+                'ngrok-skip-browser-warning': 'true'
               }
             });
 
@@ -318,7 +346,7 @@ async function lerNFC() {
             if (!response.ok) {
               throw new Error(`Erro HTTP: ${response.status}`);
             }
-            
+
             debugLog(`Status: ${response.status}`);
 
             const result = await response.json();
