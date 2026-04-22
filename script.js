@@ -284,7 +284,7 @@ const closeModal = () => {
 const urlNFC = 'https://dagny-mollusklike-exasperatedly.ngrok-free.dev/clientes';
 
 const leiturasRecentes = new Map();
-const INTERVALO_MS = 3000; // 3 segundos
+const INTERVALO_MS = 3000; 
 
 async function lerNFC() {
   if ('NDEFReader' in window) {
