@@ -127,7 +127,9 @@ async function lerNFC() {
 
     ndef.onreading = async (event) => {
     debugLog("TAG DETECTADA");
-      const { message, serialNumber } = event;
+    const { message, serialNumber } = event;
+    debugLog("Mensagem: " + JSON.stringify(message.records));
+    debugLog(serialNumber);
       const agora = Date.now();
 
       // 🔒 BLOQUEIO DE LEITURA DUPLICADA
