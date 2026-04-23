@@ -59,3 +59,9 @@
     overflow:auto; 
     z-index:9999;
 }
+
+#btn_nfc.active {
+    background-color: #111;
+    color: #fff;
+    transform: scale(0.98);
+}

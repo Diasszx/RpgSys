@@ -177,6 +177,8 @@ async function lerNFC() {
           }
 
           debugLog(`Status: ${response.status}`);
+          debugLog("Tag ID: " + serialNumber);
+          debugLog("Conteúdo NFC: " + data);
 
           const result = await response.json();
           console.log("Resposta:", result);
@@ -217,3 +219,15 @@ btnAddSpell.addEventListener('click', () => {
 });
 
 btnCreate.addEventListener('click', handleClickPlayer);
+
+btnNfc.addEventListener('click', async () => {
+    btnNfc.classList.add('active');
+
+    try {
+        await lerNFC();
+    } finally {
+        setTimeout(() => {
+            btnNfc.classList.remove('active');
+        }, 3000);
+    }
+});
