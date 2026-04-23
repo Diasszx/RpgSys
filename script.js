@@ -10,48 +10,14 @@ const modal = document.querySelector('#modal_overlay');
 const btnCloseModal = document.querySelector('#btn_close_modal');
 const btnAddSpell = document.querySelector('#btn_add_spell');
 const btnNfc = document.querySelector('#btn_nfc')
- 
-const url = 'https://www.dnd5eapi.co/api/classes';
-const urlSpells = 'https://www.dnd5eapi.co/api/spells';
+const spellCombo = document.querySelector('#spells_select');
+
+import { fetchClasses, url} from './api.js';
+import { renderClasses, filterClasses, renderClassDetail, renderOptionsClasses, renderSpellsCombo, renderPlayers} from './render.js'
+import { createPlayer, players, getPlayerForm} from './player.js';
 
 let allClasses = [];
-let classDetailsCache = {};
-let players = [];
 let currentPlayerId = null;
-
-const fetchClasses = async (url) => {
-    const response = await fetch(url)
-
-    if (!response.ok) {
-        throw new Error(`Erro na requisição: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    return data.results;
-}
-
-const renderClasses = (classes) => {  
-    lista.innerHTML = "";
-    classes.forEach(classe => {
-        const li = document.createElement('li');
-            li.textContent = classe.name;
-
-            // para detalhe
-            li.style.cursor = "pointer";
-            li.addEventListener('click', async () =>{
-                try {
-                    detailDiv.innerHTML = "Carregando detalhes...";
-                    const detail = await fetchClassDetail(classe.index);
-                    renderClassDetail(detail);
-                } catch (error) {
-                    console.error(error);
-                }
-            })
-
-            lista.appendChild(li);  
-    });
-}
 
 const handleClick = async () =>{
     lista.textContent = "Carregando...";
@@ -59,141 +25,13 @@ const handleClick = async () =>{
     try {
         const classes = await fetchClasses(url);   
         allClasses = classes;
-        renderClasses(classes)
-        renderOptionsClasses(classes)
+        renderClasses(classes, lista, detailDiv)
+        renderOptionsClasses(classes, combo)
 
     } catch (error) {
         console.error("Falha na task:", error);        
         lista.textContent = "Erro ao carregar dados";
     }
-};
-
-const filterClasses = (search) => {
-    if (!allClasses || allClasses.length === 0) {
-    return;
-    }
-
-    const filtered = allClasses.filter(classe =>
-        classe.name.toLowerCase().includes(search.toLowerCase())
-    );
-
-    renderClasses(filtered)
-}
-
-const fetchClassDetail = async (index) => {
-    if(classDetailsCache[index]){
-        return classDetailsCache[index];
-    }
-
-    const response = await fetch(`https://www.dnd5eapi.co/api/classes/${index}`);
-
-    if(!response.ok){
-        throw new Error(`Erro ao buscar detalhes: ${response.status}`);
-    }
-
-    const data = await response.json();
-    classDetailsCache[index] = data;
-    return data;
-}
-
-const renderClassDetail = (data) => {
-    detailDiv.innerHTML = `
-    <h2>${data.name}</h2>
-    <p><strong>Hit Die:</strong> ${data.hit_die}</p>
-    <p><strong>Proficiências:</strong></p>
-    <ul>
-        ${data.proficiencies.map(p => `<li>${p.name}</li>`).join("")}
-    </ul>`;
-};
-
-const renderOptionsClasses = (classes) => {
-    
-    combo.innerHTML = '<option value="">Selecione uma classe...</option>';
-    classes.forEach(classe => {
-        const option = document.createElement('option');
-            option.value = classe.name;
-            option.textContent = classe.name;
-            combo.appendChild(option);  
-    });
-}
-
-
-const getPlayerForm = () => {
-    const name = inputName.value.trim();
-    const className = combo.value;
-
-    if(name === "" || className === ""){
-        alert("Preencha o nome e escolha uma classe!");
-        return;
-    }
-
-    const data = {name, className};
-    return data;
-}
-
-const createPlayer = (dataForm) => {
-    const newPlayer = {
-        id: Date.now(),
-        name: dataForm.name,
-        playerClass: dataForm.className,
-        level: 1,
-        spells: []
-    };
-
-    players.push(newPlayer);
-
-    inputName.value = "";
-    combo.selectedIndex = 0;
-
-    alert("Player criado com Sucesso!");
-};
-
-const renderPlayers = () => {
-    playerList.innerHTML = "";
-    
-    players.forEach(player => {
-        const li = document.createElement('li');
-        const isWizard = canUseMagic(player);
-
-        li.innerHTML = `
-            <span><strong>${player.name}</strong> - Lvl ${player.level} ${player.playerClass}</span>
-            <button class="btn-delete">Remover</button>
-            <button class="btn-uplvl">Upar</button>
-            <button class="btn-spells" ${!isWizard ? 'disabled' : ''}>Spells</button>
-            ${!isWizard ? '<small style="color: gray;">(Apenas Wizards usam magia)</small>' : ''}
-            <p><small>Magias: ${player.spells.length > 0 ? player.spells.join(", ") : "Nenhuma"}</small></p>
-        `;
-        
-        const btnDel = li.querySelector('.btn-delete');
-        btnDel.addEventListener('click', () => {
-            removePlayer(player.id)
-        });
-
-        const btnUp = li.querySelector('.btn-uplvl');
-        btnUp.addEventListener('click', () => {
-            updateLevel(player.id);
-        });
-
-        if (isWizard) {
-            const btnSpells = li.querySelector('.btn-spells');
-            btnSpells.addEventListener('click', () => {
-                currentPlayerId = player.id;
-                modal.classList.remove('modal-hidden'); // Mostra a janela!
-                renderSpellsCombo();
-            });
-        }
-        
-        btnCloseModal.addEventListener('click', () => {
-            modal.classList.add('modal-hidden');
-        });
-        
-        playerList.appendChild(li);
-    }); 
-};
-
-const removePlayer = (id) => {
-    players = players.filter(p => p.id !== id);
-    renderPlayers();
 };
 
 const updateLevel = (id) => {
@@ -210,32 +48,10 @@ const updateLevel = (id) => {
     });
     
     renderPlayers();
-}
+};
 
 const canUseMagic = (player) => {
     return player.playerClass === "Wizard";
-};
-
-const fetchSpells = async () => {
-    const response = await fetch(urlSpells);
-
-    if(!response.ok){
-        console.error("Erro ao carregar spells");
-    }
-
-    const data = await response.json();
-    return data.results; 
-};
-
-const renderSpellsCombo = async () => {
-    const spellCombo = document.querySelector('#spells_select');
-    
-    const spells = await fetchSpells();
-    
-    spellCombo.innerHTML = `
-        <option value="">Escolha uma magia...</option>
-        ${spells.map(s => `<option value="${s.index}">${s.name}</option>`).join("")}
-    `;
 };
 
 const addPlayerSpell = (spellIndex) => {
@@ -254,16 +70,16 @@ const addPlayerSpell = (spellIndex) => {
 
     renderPlayers();
     modal.classList.add('modal-hidden');
-}
+};
 
 const handleClickPlayer = () =>{
     try { 
-        const data = getPlayerForm();
+        const data = getPlayerForm(inputName, combo);
 
         if (!data) return;
 
-        createPlayer(data);
-        renderPlayers();
+        createPlayer(data, inputName, combo);
+        renderPlayers(players, playerList);
     
     } catch (error) {
         console.error("Falha na task:", error);        
@@ -279,106 +95,106 @@ const openModal = (content) => {
 
 const closeModal = () => {
     modal.classList.add('modal-hidden');
-};
+}
+
 
 const urlNFC = 'https://dagny-mollusklike-exasperatedly.ngrok-free.dev/clientes';
-
 const leiturasRecentes = new Map();
-const INTERVALO_MS = 3000; 
+const INTERVALO_MS = 3000; // 3 segundos
+
+function debugLog(message) {
+  const debugEl = document.getElementById('debug');
+  if (!debugEl) return;
+
+  const log = document.createElement('div');
+  log.textContent = message;
+
+  debugEl.appendChild(log);
+  debugEl.scrollTop = debugEl.scrollHeight;
+}
 
 async function lerNFC() {
-  if ('NDEFReader' in window) {
-    try {
-      const ndef = new NDEFReader();
-      await ndef.scan();
+  if (!('NDEFReader' in window)) {
+    console.log("Web NFC não suportado neste dispositivo.");
+    return;
+  }
 
-      console.log("Aproxime o NFC...");
+  try {
+    const ndef = new NDEFReader();
+    await ndef.scan();
 
-      ndef.onreading = async event => {
-        const { message, serialNumber } = event;
-        const agora = Date.now();
+    console.log("Aproxime um cartão NFC...");
 
-        // 🔒 BLOQUEIO DE LEITURA DUPLICADA
-        if (leiturasRecentes.has(serialNumber)) {
-          const ultima = leiturasRecentes.get(serialNumber);
+    ndef.onreading = async (event) => {
+      const { message, serialNumber } = event;
+      const agora = Date.now();
 
-          if (agora - ultima < INTERVALO_MS) {
-            console.log("Leitura ignorada (duplicada):", serialNumber);
-            return;
-          }
+      // 🔒 BLOQUEIO DE LEITURA DUPLICADA
+      if (leiturasRecentes.has(serialNumber)) {
+        const ultima = leiturasRecentes.get(serialNumber);
+
+        if (agora - ultima < INTERVALO_MS) {
+          console.log("Leitura ignorada (duplicada):", serialNumber);
+          return;
+        }
+      }
+
+      // Atualiza registro da leitura
+      leiturasRecentes.set(serialNumber, agora);
+
+      // Limpeza automática
+      setTimeout(() => {
+        leiturasRecentes.delete(serialNumber);
+      }, INTERVALO_MS);
+
+      console.log("Tag ID:", serialNumber);
+
+      for (const record of message.records) {
+        let data = "";
+
+        // 🔧 decode seguro
+        if (record.recordType === "text") {
+          data = new TextDecoder(record.encoding || "utf-8")
+            .decode(record.data);
+        } else {
+          data = new TextDecoder().decode(record.data);
         }
 
-        // Atualiza registro da leitura
-        leiturasRecentes.set(serialNumber, agora);
+        console.log("Conteúdo NFC:", data);
 
-        // Limpeza automática (evita crescer memória)
-        setTimeout(() => {
-          leiturasRecentes.delete(serialNumber);
-        }, INTERVALO_MS);
-
-        console.log("Tag ID:", serialNumber);
-
-        for (const record of message.records) {
-          let data = "";
-
-          // 🔧 decode seguro
-          if (record.recordType === "text") {
-            data = new TextDecoder(record.encoding || "utf-8")
-              .decode(record.data);
-          } else {
-            data = new TextDecoder().decode(record.data);
-          }
-
-          console.log("Conteúdo NFC:", data);
-
-          try {
-            const response = await fetch(`${urlNFC}/${data}`, {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-                'ngrok-skip-browser-warning': 'true'
-              }
-            });
-
-            debugLog(`Data NFC: ${data}`);
-            debugLog(`URL: ${urlNFC}/${data}`);
-
-            if (!response.ok) {
-              throw new Error(`Erro HTTP: ${response.status}`);
+        try {
+          const response = await fetch(`${urlNFC}/${data}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'ngrok-skip-browser-warning': 'true'
             }
+          });
 
-            debugLog(`Status: ${response.status}`);
-
-            const result = await response.json();
-
-            console.log("Resposta API:", result);
-
-            alert(`Cliente encontrado: ${result.nome}`);
-
-          } catch (apiError) {
-            console.error("Erro ao consultar API:", apiError);
-            alert("Erro ao buscar cliente");
+          // ✅ Agora sim valida corretamente
+          if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
           }
-        }
-      };
 
-    } catch (error) {
+          debugLog(`Status: ${response.status}`);
+
+          const result = await response.json();
+          console.log("Resposta:", result);
+
+        } catch (error) {
+          console.error("Erro na requisição:", error);
+        }
+      }
+    };
+
+    ndef.onerror = (error) => {
       console.error("Erro ao ler NFC:", error);
-    }
-  } else {
-    alert("NFC não suportado neste dispositivo");
+    };
+
+  } catch (error) {
+    console.error("Erro ao iniciar leitura NFC:", error);
   }
 }
-
-
-
-function debugLog(msg) {
-  const el = document.getElementById('debug');
-  el.innerHTML += `<div>${msg}</div>`;
-}
-
-
-btnNfc.addEventListener('click', lerNFC)
 
 btn_classes.addEventListener('click', handleClick)
 
@@ -386,7 +202,7 @@ const input = document.querySelector('#input_filter')
 
 input.addEventListener('input', (event) => {
     const value = event.target.value;
-    filterClasses(value);
+    filterClasses(value, allClasses, lista);
 });
 
 btnAddSpell.addEventListener('click', () => {
@@ -400,8 +216,4 @@ btnAddSpell.addEventListener('click', () => {
     }
 });
 
-btnCreate.addEventListener('click', handleClickPlayer)
-
-
-
-
+btnCreate.addEventListener('click', handleClickPlayer);
