@@ -126,6 +126,7 @@ async function lerNFC() {
     console.log("Aproxime um cartão NFC...");
 
     ndef.onreading = async (event) => {
+    debugLog("TAG DETECTADA");
       const { message, serialNumber } = event;
       const agora = Date.now();
 
