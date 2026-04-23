@@ -161,6 +161,10 @@ async function lerNFC() {
         }
 
         console.log("Conteúdo NFC:", data);
+        
+           debugLog(`Status: ${response.status}`);
+          debugLog("Tag ID: " + serialNumber);
+          debugLog("Conteúdo NFC: " + data);
 
         try {
           const response = await fetch(`${urlNFC}/${data}`, {
