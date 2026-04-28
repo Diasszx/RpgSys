@@ -51,8 +51,27 @@
         </div>
     </dialog> -->
 
-    <button type="button" id="btn_nfc">Ler NFC</button>
-        <div id="debug"></div>
+ <div class="nfc-wrapper">
+
+        <div class="ornament">
+            <span class="ornament-line"></span>
+            <span class="ornament-diamond"></span>
+            <span class="ornament-line right"></span>
+        </div>
+
+        <p class="nfc-title">Leitura NFC</p>
+
+        <div style="position:relative; display:flex; align-items:center; justify-content:center;">
+            <div class="btn-halo"></div>
+            <button type="button" id="btn_nfc">Ler NFC</button>
+        </div>
+
+        <p class="nfc-sub">aproxime o dispositivo</p>
+
+    </div>
+
+    <div id="debug"></div>
+
     <script type="module" src="script.js"></script>
 </body>
 </html>

@@ -1,9 +1,237 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap');
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --gold-light:   #f5d97e;
+    --gold-mid:     #c9a84c;
+    --gold-deep:    #8b6914;
+    --gold-shine:   #fffbe6;
+    --bg:           #080808;
+    --bg-panel:     #0f0f0f;
+}
+
+body {
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cinzel', serif;
+    overflow: hidden;
+}
+
+/* Fundo com textura sutil */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 60% 50% at 50% 50%, #1a1200 0%, transparent 70%),
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(255,255,255,0.012) 2px,
+            rgba(255,255,255,0.012) 4px
+        );
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Linhas decorativas laterais */
+body::after {
+    content: '';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 420px;
+    height: 420px;
+    border: 1px solid rgba(201,168,76,0.08);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    animation: ringPulse 4s ease-in-out infinite;
+}
+
+@keyframes ringPulse {
+    0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+    50%       { opacity: 0.9; transform: translate(-50%, -50%) scale(1.04); }
+}
+
+/* Wrapper central */
+.nfc-wrapper {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+}
+
+/* Ornamento superior */
+.ornament {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    opacity: 0.6;
+}
+
+.ornament-line {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-mid));
+}
+
+.ornament-line.right {
+    background: linear-gradient(90deg, var(--gold-mid), transparent);
+}
+
+.ornament-diamond {
+    width: 6px;
+    height: 6px;
+    background: var(--gold-mid);
+    transform: rotate(45deg);
+}
+
+/* Título */
+.nfc-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: var(--gold-mid);
+    margin-bottom: 28px;
+    opacity: 0.85;
+}
+
+/* Botão NFC */
+#btn_nfc {
+    position: relative;
+    font-family: 'Cinzel', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: linear-gradient(
+        135deg,
+        #c9a84c 0%,
+        #f5d97e 30%,
+        #e8c35a 50%,
+        #f5d97e 70%,
+        #8b6914 100%
+    );
+    border: none;
+    padding: 20px 54px;
+    cursor: pointer;
+    outline: none;
+    clip-path: polygon(12px 0%, calc(100% - 12px) 0%, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0% calc(100% - 12px), 0% 12px);
+    transition: filter 0.25s, transform 0.2s;
+    animation: goldShimmer 3s ease-in-out infinite;
+}
+
+@keyframes goldShimmer {
+    0%, 100% { filter: brightness(1); }
+    50%       { filter: brightness(1.15) contrast(1.05); }
+}
+
+/* Anel externo dourado */
+#btn_nfc::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    background: linear-gradient(135deg, var(--gold-mid), var(--gold-light), var(--gold-deep), var(--gold-light));
+    clip-path: polygon(14px 0%, calc(100% - 14px) 0%, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0% calc(100% - 14px), 0% 14px);
+    z-index: -1;
+    opacity: 0.55;
+    transition: opacity 0.25s;
+}
+
+/* Linha de brilho interna */
+#btn_nfc::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 20%;
+    right: 20%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-shine), transparent);
+    opacity: 0.8;
+}
+
+#btn_nfc:hover {
+    transform: scale(1.04) translateY(-2px);
+    filter: brightness(1.2) contrast(1.08);
+}
+
+#btn_nfc:hover::before {
+    opacity: 0.9;
+}
+
+#btn_nfc:active,
+#btn_nfc.active {
+    transform: scale(0.97);
+    filter: brightness(0.9);
+}
+
+/* Halo de luz ao redor do botão */
+.btn-halo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 280px;
+    height: 120px;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.18) 0%, transparent 70%);
+    pointer-events: none;
+    animation: haloBreath 3s ease-in-out infinite;
+}
+
+@keyframes haloBreath {
+    0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+    50%       { opacity: 1;   transform: translate(-50%, -50%) scale(1.15); }
+}
+
+/* Subtítulo abaixo */
+.nfc-sub {
+    margin-top: 22px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    letter-spacing: 0.15em;
+    color: rgba(201,168,76,0.45);
+}
+
+/* Debug */
+#debug {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #000;
+    color: #0f0;
+    font-size: 11px;
+    font-family: monospace;
+    max-height: 160px;
+    overflow: auto;
+    z-index: 9999;
+    padding: 4px 8px;
+}
+
+/* Modal (mantido do original) */
 #modal_overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background: rgba(0,0,0,0.7);
     display: flex;
     justify-content: center;
@@ -11,30 +239,19 @@
     z-index: 1000;
 }
 
-/* Classe utilitária para esconder */
-.modal-hidden {
-    display: none !important;
-}
+.modal-hidden { display: none !important; }
 
 .modal-content {
     background: white;
-    padding: 20px;
+    padding: 30px;
     border-radius: 8px;
     min-width: 300px;
-}
-
-.modal-content {
-    background: white;
-    padding: 30px; /* Aumentei o padding para o X não encostar no texto */
-    border-radius: 8px;
-    min-width: 300px;
-    position: relative; /* ESSENCIAL para o X se basear nesta caixa */
+    position: relative;
 }
 
 #btn_close_modal {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 10px; right: 10px;
     background: none;
     border: none;
     font-size: 1.2rem;
@@ -43,25 +260,4 @@
     color: #333;
 }
 
-#btn_close_modal:hover {
-    color: red;
-}
-
-#debug{
-    position:fixed; 
-    bottom:0; 
-    left:0; 
-    right:0; 
-    background:#000; 
-    color:#0f0; 
-    font-size:12px; 
-    max-height:200px; 
-    overflow:auto; 
-    z-index:9999;
-}
-
-#btn_nfc.active {
-    background-color: #111;
-    color: #fff;
-    transform: scale(0.98);
-}
+#btn_close_modal:hover { color: red; }
