@@ -51,8 +51,8 @@ body::after {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 24rem;
-    height: 24rem;
+    width: 21rem;
+    height: 21rem;
     border: 1px solid rgba(201,168,76,0.5);
     border-radius: 50%;
     pointer-events: none;
