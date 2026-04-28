@@ -1,101 +1,101 @@
-const btn_classes = document.querySelector('#btn_class')
-const detailDiv = document.querySelector('#class_detail');
-const lista = document.querySelector('#lista_classes');
-const combo = document.querySelector('#classes_select');
-const inputName = document.querySelector('#player_name');
-const btnCreate = document.querySelector('#btn_create');
-const playerList = document.querySelector('#lista_personagens');
-const spellSelected = document.querySelector('#spells_select');
-const modal = document.querySelector('#modal_overlay');
-const btnCloseModal = document.querySelector('#btn_close_modal');
-const btnAddSpell = document.querySelector('#btn_add_spell');
+// const btn_classes = document.querySelector('#btn_class')
+// const detailDiv = document.querySelector('#class_detail');
+// const lista = document.querySelector('#lista_classes');
+// const combo = document.querySelector('#classes_select');
+// const inputName = document.querySelector('#player_name');
+// const btnCreate = document.querySelector('#btn_create');
+// const playerList = document.querySelector('#lista_personagens');
+// const spellSelected = document.querySelector('#spells_select');
+// const modal = document.querySelector('#modal_overlay');
+// const btnCloseModal = document.querySelector('#btn_close_modal');
+// const btnAddSpell = document.querySelector('#btn_add_spell');
 const btnNfc = document.querySelector('#btn_nfc')
-const spellCombo = document.querySelector('#spells_select');
+// const spellCombo = document.querySelector('#spells_select');
 
-import { fetchClasses, url} from './api.js';
-import { renderClasses, filterClasses, renderClassDetail, renderOptionsClasses, renderSpellsCombo, renderPlayers} from './render.js'
-import { createPlayer, players, getPlayerForm} from './player.js';
+// import { fetchClasses, url} from './api.js';
+// import { renderClasses, filterClasses, renderClassDetail, renderOptionsClasses, renderSpellsCombo, renderPlayers} from './render.js'
+// import { createPlayer, players, getPlayerForm} from './player.js';
 
-let allClasses = [];
-let currentPlayerId = null;
+// let allClasses = [];
+// let currentPlayerId = null;
 
-const handleClick = async () =>{
-    lista.textContent = "Carregando...";
+// const handleClick = async () =>{
+//     lista.textContent = "Carregando...";
 
-    try {
-        const classes = await fetchClasses(url);   
-        allClasses = classes;
-        renderClasses(classes, lista, detailDiv)
-        renderOptionsClasses(classes, combo)
+//     try {
+//         const classes = await fetchClasses(url);   
+//         allClasses = classes;
+//         renderClasses(classes, lista, detailDiv)
+//         renderOptionsClasses(classes, combo)
 
-    } catch (error) {
-        console.error("Falha na task:", error);        
-        lista.textContent = "Erro ao carregar dados";
-    }
-};
+//     } catch (error) {
+//         console.error("Falha na task:", error);        
+//         lista.textContent = "Erro ao carregar dados";
+//     }
+// };
 
-const updateLevel = (id) => {
-    players = players.map(p => {
-        if(p.id === id && p.level < 20 ){
-            return{...p, level: p.level + 1}; 
-        }
+// const updateLevel = (id) => {
+//     players = players.map(p => {
+//         if(p.id === id && p.level < 20 ){
+//             return{...p, level: p.level + 1}; 
+//         }
 
-        if(p.id == id && p.level >= 20){
-            alert("Level máximo alcançado!");
-        }
+//         if(p.id == id && p.level >= 20){
+//             alert("Level máximo alcançado!");
+//         }
 
-        return p;
-    });
+//         return p;
+//     });
     
-    renderPlayers();
-};
+//     renderPlayers();
+// };
 
-const canUseMagic = (player) => {
-    return player.playerClass === "Wizard";
-};
+// const canUseMagic = (player) => {
+//     return player.playerClass === "Wizard";
+// };
 
-const addPlayerSpell = (spellIndex) => {
-    if (!currentPlayerId) return;
+// const addPlayerSpell = (spellIndex) => {
+//     if (!currentPlayerId) return;
     
-    players = players.map(p => {
-        if(p.id === currentPlayerId){
-            if (!p.spells.includes(spellIndex)) {
-                return { ...p, spells: [...p.spells, spellIndex] 
-                };
-            }   
-        }
+//     players = players.map(p => {
+//         if(p.id === currentPlayerId){
+//             if (!p.spells.includes(spellIndex)) {
+//                 return { ...p, spells: [...p.spells, spellIndex] 
+//                 };
+//             }   
+//         }
 
-        return p;
-    });
+//         return p;
+//     });
 
-    renderPlayers();
-    modal.classList.add('modal-hidden');
-};
+//     renderPlayers();
+//     modal.classList.add('modal-hidden');
+// };
 
-const handleClickPlayer = () =>{
-    try { 
-        const data = getPlayerForm(inputName, combo);
+// const handleClickPlayer = () =>{
+//     try { 
+//         const data = getPlayerForm(inputName, combo);
 
-        if (!data) return;
+//         if (!data) return;
 
-        createPlayer(data, inputName, combo);
-        renderPlayers(players, playerList);
+//         createPlayer(data, inputName, combo);
+//         renderPlayers(players, playerList);
     
-    } catch (error) {
-        console.error("Falha na task:", error);        
-        lista.textContent = "Erro ao criar player";
-    }
-};
+//     } catch (error) {
+//         console.error("Falha na task:", error);        
+//         lista.textContent = "Erro ao criar player";
+//     }
+// };
 
 
-const openModal = (content) => {
-    modalBody.innerHTML = content; // Injeta o que você quiser (lista de spells, etc)
-    modal.classList.remove('modal-hidden');
-};
+// const openModal = (content) => {
+//     modalBody.innerHTML = content; // Injeta o que você quiser (lista de spells, etc)
+//     modal.classList.remove('modal-hidden');
+// };
 
-const closeModal = () => {
-    modal.classList.add('modal-hidden');
-}
+// const closeModal = () => {
+//     modal.classList.add('modal-hidden');
+// }
 
 
 const urlNFC = 'https://dagny-mollusklike-exasperatedly.ngrok-free.dev/clientes';
@@ -201,27 +201,27 @@ async function lerNFC() {
   }
 }
 
-btn_classes.addEventListener('click', handleClick)
+// btn_classes.addEventListener('click', handleClick)
 
-const input = document.querySelector('#input_filter')
+// const input = document.querySelector('#input_filter')
 
-input.addEventListener('input', (event) => {
-    const value = event.target.value;
-    filterClasses(value, allClasses, lista);
-});
+// input.addEventListener('input', (event) => {
+//     const value = event.target.value;
+//     filterClasses(value, allClasses, lista);
+// });
 
-btnAddSpell.addEventListener('click', () => {
-    const selectedValue = spellSelected.value;
+// btnAddSpell.addEventListener('click', () => {
+//     const selectedValue = spellSelected.value;
 
-    if (selectedValue) {
-        addPlayerSpell(selectedValue);
-        closeModal(); 
-    } else {
-        alert("Selecione uma magia primeiro!");
-    }
-});
+//     if (selectedValue) {
+//         addPlayerSpell(selectedValue);
+//         closeModal(); 
+//     } else {
+//         alert("Selecione uma magia primeiro!");
+//     }
+// });
 
-btnCreate.addEventListener('click', handleClickPlayer);
+// btnCreate.addEventListener('click', handleClickPlayer);
 
 btnNfc.addEventListener('click', async () => {
     btnNfc.classList.add('active');

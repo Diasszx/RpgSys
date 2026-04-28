@@ -1,5 +1,5 @@
-import {players} from './player.js';
+// import {players} from './player.js';
 
-export const canUseMagic = (player) => {
-    return player.playerClass === "Wizard";
-};
+// export const canUseMagic = (player) => {
+//     return player.playerClass === "Wizard";
+// };
