@@ -23,7 +23,7 @@ body {
     align-items: center;
     justify-content: center;
     font-family: 'Cinzel', serif;
-    overflow: hidden;
+    overflow: auto;
 }
 
 /* Fundo com textura sutil */
