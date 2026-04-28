@@ -23,13 +23,13 @@ body {
     align-items: center;
     justify-content: center;
     font-family: 'Cinzel', serif;
-    overflow: auto;
+    overflow: hidden;
 }
 
 /* Fundo com textura sutil */
 body::before {
     content: '';
-    position: fixed;
+    position: absolute;
     inset: 0;
     background:
         radial-gradient(ellipse 60% 50% at 50% 50%, #1a1200 0%, transparent 70%),
